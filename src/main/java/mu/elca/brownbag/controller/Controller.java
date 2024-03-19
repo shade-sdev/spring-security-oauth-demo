@@ -1,12 +1,11 @@
 package mu.elca.brownbag.controller;
 
+import mu.elca.brownbag.controller.model.UserUpdateDto;
 import mu.elca.brownbag.security.model.CustomAuth2User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -32,6 +31,12 @@ public class Controller {
                                                                                  .getPrincipal();
 
         return ResponseEntity.ok(customAuth2User);
+    }
+
+    @PostMapping("/users")
+    public ResponseEntity<UserUpdateDto> updateUserDetails(@RequestBody UserUpdateDto userUpdateDto)
+    {
+        return ResponseEntity.ok(userUpdateDto);
     }
 
 }
