@@ -76,8 +76,8 @@ public class CustomAuth2User extends DefaultOAuth2User {
             case DISCORD -> String.format("https://cdn.discordapp.com/avatars/%s/%s",
                                           attributes.get("id"),
                                           attributes.get(auth2ProviderType.getPicture()));
-            case GITHUB -> String.format("https://ui-avatars.com/api/?name=%s",
-                                         attributes.get(auth2ProviderType.getDisplayName()));
+            default -> String.format("https://ui-avatars.com/api/?name=%s",
+                                     attributes.get(auth2ProviderType.getDisplayName()));
         };
     }
 

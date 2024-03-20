@@ -56,6 +56,18 @@
       <optional>true</optional>
     </dependency>
 
+      <dependency>
+          <groupId>org.mapstruct</groupId>
+          <artifactId>mapstruct</artifactId>
+          <version>1.5.5.Final</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.mapstruct</groupId>
+          <artifactId>mapstruct-processor</artifactId>
+          <version>1.5.5.Final</version>
+      </dependency>
+
   </dependencies>
 
   <build>
@@ -68,6 +80,14 @@
             <exclude>
               <groupId>org.projectlombok</groupId>
               <artifactId>lombok</artifactId>
+            </exclude>
+              <exclude>
+                  <groupId>org.mapstruct</groupId>
+                  <artifactId>mapstruct</artifactId>
+              </exclude>
+              <exclude>
+                  <groupId>org.mapstruct</groupId>
+                  <artifactId>mapstruct-processor</artifactId>
             </exclude>
           </excludes>
         </configuration>

@@ -9,9 +9,10 @@ import java.util.Arrays;
 @Getter
 public enum OAuth2ProviderType {
 
-    DISCORD("discord", "username", "global_name", "email", "avatar","username"),
-    GITHUB("github", "login", "name", "email", "","id"),
-    GOOGLE("google", "sub", "name", "email", "picture","sub");
+    DISCORD("discord", "username", "global_name", "email", "avatar", "username"),
+    GITHUB("github", "login", "name", "email", "", "id"),
+    GOOGLE("google", "sub", "name", "email", "picture", "sub"),
+    NON_OAUTH2_USER(null, null, null, null, null, null);
 
     private final String provider;
 
