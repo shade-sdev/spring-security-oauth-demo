@@ -18,7 +18,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                             .id(UUID.randomUUID())
                             .username(username)
                             .email("user@email.com")
-                            .password(new BCryptPasswordEncoder().encode("shade"))
+                            .password(new BCryptPasswordEncoder().encode(username))
                             .build();
     }
 }
