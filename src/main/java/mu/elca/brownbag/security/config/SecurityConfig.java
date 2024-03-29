@@ -5,6 +5,7 @@ import mu.elca.brownbag.security.service.CustomSuccessHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -16,8 +17,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -45,16 +48,17 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                                      .csrfTokenRequestHandler(requestHandler))
                    .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
-                   .authorizeHttpRequests(auth -> auth.requestMatchers("/csrf", "/login", "form-login").permitAll()
-                                                      .requestMatchers("/api/**").authenticated())
+                   .authorizeHttpRequests(auth -> auth.requestMatchers("/csrf", "/login", "form-login", "/logout").permitAll()
+                                                      .anyRequest()
+                                                      .authenticated())
                    .formLogin(formLogin -> formLogin.loginPage("/form-login")
-                                                    .defaultSuccessUrl("/api/me")
-                                                    .permitAll())
+                                                    .defaultSuccessUrl("/api/me"))
                    .oauth2Login(oauth -> oauth
                            .userInfoEndpoint(userInfo -> userInfo.userService(new CustomOAuth2UserService()))
                            .successHandler(new CustomSuccessHandlerService()))
                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-
+                   .exceptionHandling(exception -> exception
+                           .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher("/api/**")))
                    .build();
     }
 
