@@ -5,7 +5,6 @@ import mu.elca.brownbag.security.service.CustomSuccessHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
@@ -52,10 +50,11 @@ public class SecurityConfig {
                    .formLogin(formLogin -> formLogin.loginPage("/form-login")
                                                     .defaultSuccessUrl("/api/me")
                                                     .permitAll())
-                   .oauth2Login(oauth -> oauth.userInfoEndpoint(userInfo -> userInfo.userService(new CustomOAuth2UserService()))
-                                              .successHandler(new CustomSuccessHandlerService()))
+                   .oauth2Login(oauth -> oauth
+                           .userInfoEndpoint(userInfo -> userInfo.userService(new CustomOAuth2UserService()))
+                           .successHandler(new CustomSuccessHandlerService()))
                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                   .exceptionHandling(exception -> exception.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+
                    .build();
     }
 

@@ -37,3 +37,4 @@ build/
 ### Mac OS ###
 .DS_Store
 /src/main/resources/application-dev.yaml
+/.idea/git_toolbox_prj.xml
