@@ -1,5 +1,6 @@
 package mu.elca.brownbag.security.config;
 
+import mu.elca.brownbag.security.model.CustomAuthorizationManager;
 import mu.elca.brownbag.security.service.CustomOAuth2UserService;
 import mu.elca.brownbag.security.service.CustomSuccessHandlerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
+    private static final String MYPROFILE ="/api/me";
+
     @Autowired
     public SecurityConfig(UserDetailsService userDetailsService)
     {
@@ -49,10 +52,11 @@ public class SecurityConfig {
                                      .csrfTokenRequestHandler(requestHandler))
                    .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                    .authorizeHttpRequests(auth -> auth.requestMatchers("/csrf", "/login", "form-login", "/logout").permitAll()
+                           .requestMatchers(MYPROFILE).access(new CustomAuthorizationManager())
                                                       .anyRequest()
                                                       .authenticated())
                    .formLogin(formLogin -> formLogin.loginPage("/form-login")
-                                                    .defaultSuccessUrl("/api/me"))
+                                                    .defaultSuccessUrl(MYPROFILE))
                    .oauth2Login(oauth -> oauth
                            .userInfoEndpoint(userInfo -> userInfo.userService(new CustomOAuth2UserService()))
                            .successHandler(new CustomSuccessHandlerService()))
