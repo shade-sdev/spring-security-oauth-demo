@@ -35,9 +35,13 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
                 .stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_DISCORD"));
 
+        if (!isDiscord){
+            return new AuthorizationDecision(true);
+        }
+
         int currentRequestCount = getRequestCountForUser(authentication.get().getName());
 
-        if (isDiscord && currentRequestCount < MAX_REQUESTS) {
+        if (currentRequestCount < MAX_REQUESTS) {
             incrementRequestCountForUser(authentication.get().getName());
             return new AuthorizationDecision(true);
         }

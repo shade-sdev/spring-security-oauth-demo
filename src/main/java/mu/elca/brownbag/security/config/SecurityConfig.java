@@ -59,7 +59,8 @@ public class SecurityConfig {
                                                     .defaultSuccessUrl(MYPROFILE))
                    .oauth2Login(oauth -> oauth
                            .userInfoEndpoint(userInfo -> userInfo.userService(new CustomOAuth2UserService()))
-                           .successHandler(new CustomSuccessHandlerService()))
+                           .successHandler(new CustomSuccessHandlerService())
+                           .defaultSuccessUrl(MYPROFILE))
                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                    .exceptionHandling(exception -> exception
                            .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher("/api/**")))

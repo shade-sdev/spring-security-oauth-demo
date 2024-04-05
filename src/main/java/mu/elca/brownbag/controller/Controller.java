@@ -7,6 +7,7 @@ import mu.elca.brownbag.security.model.CustomAuth2User;
 import mu.elca.brownbag.security.model.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class Controller {
     }
 
     @GetMapping("/discord")
-    @PreAuthorize("hasAuthority('ROLE_DISCORD')")
+    @Secured("ROLE_DISCORD")
     public ResponseEntity<CustomAuth2User> discord()
     {
         CustomAuth2User customAuth2User = (CustomAuth2User) SecurityContextHolder.getContext()
@@ -55,9 +56,9 @@ public class Controller {
         return ResponseEntity.ok(customAuth2User);
     }
 
-    @PostMapping("/users")
-    public ResponseEntity<UserUpdateDto> updateUserDetails(@RequestBody UserUpdateDto userUpdateDto)
-    {
+    @PutMapping("/user")
+    @PreAuthorize("hasAuthority('NON_OAUTH_USER') && #userUpdateDto.username == authentication.principal.username")
+    public ResponseEntity<UserUpdateDto> updateUserDetails(@RequestBody UserUpdateDto userUpdateDto) {
         return ResponseEntity.ok(userUpdateDto);
     }
 
