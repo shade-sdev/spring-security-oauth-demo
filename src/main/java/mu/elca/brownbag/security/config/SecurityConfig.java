@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
@@ -34,7 +35,7 @@ public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
 
-    private static final String MYPROFILE ="/api/me";
+    private static final String MYPROFILE = "/api/me";
 
     @Autowired
     public SecurityConfig(UserDetailsService userDetailsService)
@@ -48,7 +49,7 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                    .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                    .authorizeHttpRequests(auth -> auth.requestMatchers("/csrf", "/login", "form-login", "/logout").permitAll()
-                           .requestMatchers(MYPROFILE).access(new CustomAuthorizationManager())
+                                                      .requestMatchers(MYPROFILE).access(new CustomAuthorizationManager())
                                                       .anyRequest()
                                                       .authenticated())
 //                .rememberMe(rememberMe->rememberMe.key("secretKey")
@@ -59,6 +60,7 @@ public class SecurityConfig {
                            .userInfoEndpoint(userInfo -> userInfo.userService(new CustomOAuth2UserService()))
                            .successHandler(new CustomSuccessHandlerService()))
                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                   .logout(logout -> logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
                    .exceptionHandling(exception -> exception
                            .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher("/api/**")))
                    .build();
