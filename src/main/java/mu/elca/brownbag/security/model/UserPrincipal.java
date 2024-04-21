@@ -4,17 +4,15 @@ import lombok.Builder;
 import lombok.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import static lombok.Builder.Default;
 
 @Value
 @Builder
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal implements CustomPrincipal {
 
     UUID id;
 
@@ -25,12 +23,24 @@ public class UserPrincipal implements UserDetails {
     String email;
 
     @Default
-    OAuth2ProviderType oAuth2ProviderType = OAuth2ProviderType.NON_OAUTH2_USER;
+    AuthProviderType authProviderType = AuthProviderType.NON_OAUTH2_USER;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities()
+    public String getDisplayName()
     {
-        return List.of(new SimpleGrantedAuthority("NON_OAUTH_USER"));
+        return this.username;
+    }
+
+    @Override
+    public String getAvatar()
+    {
+        return String.format("https://ui-avatars.com/api/?name=%s", this.getUsername());
+    }
+
+    @Override
+    public Set<GrantedAuthority> getAuthorities()
+    {
+        return Set.of(new SimpleGrantedAuthority("NON_OAUTH_USER"));
     }
 
     @Override

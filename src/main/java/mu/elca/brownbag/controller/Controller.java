@@ -4,7 +4,7 @@ import mu.elca.brownbag.controller.model.UserInfo;
 import mu.elca.brownbag.controller.model.UserUpdateDto;
 import mu.elca.brownbag.mapper.ApiMapper;
 import mu.elca.brownbag.security.model.CustomAuth2User;
-import mu.elca.brownbag.security.model.UserPrincipal;
+import mu.elca.brownbag.security.model.CustomPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -34,11 +34,7 @@ public class Controller {
                                                     .getAuthentication()
                                                     .getPrincipal();
 
-        if (userPrincipal instanceof CustomAuth2User userInfo) {
-            return ResponseEntity.ok(mapper.mapToUserInfo(userInfo));
-        }
-
-        if (userPrincipal instanceof UserPrincipal userInfo) {
+        if (userPrincipal instanceof CustomPrincipal userInfo) {
             return ResponseEntity.ok(mapper.mapToUserInfo(userInfo));
         }
 

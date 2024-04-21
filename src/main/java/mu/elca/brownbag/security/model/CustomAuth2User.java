@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @EqualsAndHashCode(callSuper = true)
 @Value
-public class CustomAuth2User extends DefaultOAuth2User {
+public class CustomAuth2User extends DefaultOAuth2User implements CustomPrincipal {
 
     String username;
 
@@ -24,7 +24,7 @@ public class CustomAuth2User extends DefaultOAuth2User {
 
     String avatar;
 
-    OAuth2ProviderType OAuth2ProviderType;
+    AuthProviderType authProviderType;
 
     @Builder
     public CustomAuth2User(Collection<? extends GrantedAuthority> authorities,
@@ -33,19 +33,19 @@ public class CustomAuth2User extends DefaultOAuth2User {
                            String username,
                            String displayName,
                            String email, String avatar,
-                           OAuth2ProviderType OAuth2ProviderType)
+                           AuthProviderType authProviderType)
     {
         super(authorities, attributes, nameAttributeKey);
         this.username = username;
         this.displayName = displayName;
         this.email = email;
         this.avatar = avatar;
-        this.OAuth2ProviderType = OAuth2ProviderType;
+        this.authProviderType = authProviderType;
     }
 
     public static CustomAuth2User fromOAuth2Provider(Collection<? extends GrantedAuthority> authorities,
                                                      Map<String, Object> attributes,
-                                                     OAuth2ProviderType auth2ProviderType)
+                                                     AuthProviderType auth2ProviderType)
     {
         List<String> currentAuthorities = authorities.stream()
                                                      .map(GrantedAuthority::getAuthority)
@@ -65,11 +65,41 @@ public class CustomAuth2User extends DefaultOAuth2User {
                               .authorities(updatedAuthorities)
                               .attributes(attributes)
                               .nameAttributeKey(auth2ProviderType.getUserNameAttributeName())
-                              .OAuth2ProviderType(auth2ProviderType)
+                              .authProviderType(auth2ProviderType)
                               .build();
     }
 
-    private static String getAvatarUrl(Map<String, Object> attributes, OAuth2ProviderType auth2ProviderType)
+    @Override
+    public String getPassword()
+    {
+        return null;
+    }
+
+    @Override
+    public boolean isAccountNonExpired()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled()
+    {
+        return true;
+    }
+
+    private static String getAvatarUrl(Map<String, Object> attributes, AuthProviderType auth2ProviderType)
     {
         return switch (auth2ProviderType) {
             case GOOGLE -> (String) attributes.get(auth2ProviderType.getPicture());

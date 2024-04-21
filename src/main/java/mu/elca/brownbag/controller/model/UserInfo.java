@@ -1,6 +1,6 @@
 package mu.elca.brownbag.controller.model;
 
-import mu.elca.brownbag.security.model.OAuth2ProviderType;
+import mu.elca.brownbag.security.model.AuthProviderType;
 
 import java.util.Set;
 import java.util.UUID;
@@ -10,6 +10,6 @@ public record UserInfo(UUID id,
                        String displayName,
                        String email,
                        String avatar,
-                       OAuth2ProviderType oAuth2ProviderType,
+                       AuthProviderType authProviderType,
                        Set<String> authorities) {
 }

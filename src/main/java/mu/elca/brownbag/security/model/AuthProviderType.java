@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 @RequiredArgsConstructor
 @Getter
-public enum OAuth2ProviderType {
+public enum AuthProviderType {
 
     DISCORD("discord", "username", "global_name", "email", "avatar", "username"),
     GITHUB("github", "login", "name", "email", "", "id"),
@@ -26,9 +26,9 @@ public enum OAuth2ProviderType {
 
     private final String userNameAttributeName;
 
-    public static OAuth2ProviderType getProviderType(String provider)
+    public static AuthProviderType getProviderType(String provider)
     {
-        return Arrays.stream(OAuth2ProviderType.values())
+        return Arrays.stream(AuthProviderType.values())
                      .filter(it -> it.getProvider().equalsIgnoreCase(provider))
                      .findAny()
                      .orElseThrow(() -> new IllegalArgumentException("No such provider: " + provider));
