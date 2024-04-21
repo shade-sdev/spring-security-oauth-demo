@@ -64,7 +64,8 @@ public class SecurityConfig {
                            .userInfoEndpoint(userInfo -> userInfo.userService(new CustomOAuth2UserService()))
                            .successHandler(new CustomSuccessHandlerService()))
                    .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
-                   .logout(logout -> logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK)))
+                   .logout(logout -> logout.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                                           .deleteCookies("JSESSIONID", "XSRF-TOKEN"))
                    .exceptionHandling(exception -> exception
                            .defaultAuthenticationEntryPointFor(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED), new AntPathRequestMatcher("/api/**")))
                    .build();
