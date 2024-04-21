@@ -52,8 +52,8 @@ public class Controller {
         return ResponseEntity.ok(customAuth2User);
     }
 
-    @PutMapping("/user")
-    @PreAuthorize("hasAuthority('NON_OAUTH_USER') && #userUpdateDto.username == authentication.principal.username")
+    @PutMapping("/users")
+    @PreAuthorize("hasAnyAuthority('NON_OAUTH_USER', 'OAUTH2_USER') && #userUpdateDto.username == authentication.principal.username")
     public ResponseEntity<UserUpdateDto> updateUserDetails(@RequestBody UserUpdateDto userUpdateDto) {
         return ResponseEntity.ok(userUpdateDto);
     }
