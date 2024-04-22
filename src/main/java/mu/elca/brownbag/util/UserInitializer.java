@@ -74,7 +74,7 @@ public class UserInitializer implements CommandLineRunner {
                                            .authProviderType(AuthProviderType.NON_OAUTH2_USER)
                                            .username("admin")
                                            .password(passwordEncoder.encode("admin"))
-                                           .role(userRole)
+                                           .role(adminRole)
                                            .build();
 
         repository.saveAll(List.of(user, admin));

@@ -14,7 +14,6 @@ public class CustomSuccessHandlerService implements AuthenticationSuccessHandler
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException
     {
-        //request.getSession().setMaxInactiveInterval(10);
         response.sendRedirect("http://localhost:4200/popup-redirect");
     }
 }

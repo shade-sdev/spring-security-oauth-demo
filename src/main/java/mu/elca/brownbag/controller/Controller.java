@@ -1,9 +1,9 @@
 package mu.elca.brownbag.controller;
 
+import mu.elca.brownbag.controller.model.ResponseMessage;
 import mu.elca.brownbag.controller.model.UserInfo;
 import mu.elca.brownbag.controller.model.UserUpdateDto;
 import mu.elca.brownbag.mapper.ApiMapper;
-import mu.elca.brownbag.security.model.CustomAuth2User;
 import mu.elca.brownbag.security.model.CustomPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,15 +41,25 @@ public class Controller {
         return ResponseEntity.of(Optional.empty());
     }
 
+    @GetMapping("/user")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<ResponseMessage> user()
+    {
+        return ResponseEntity.ok(ResponseMessage.builder().message("User").build());
+    }
+
     @GetMapping("/discord")
     @Secured("ROLE_DISCORD")
-    public ResponseEntity<CustomAuth2User> discord()
+    public ResponseEntity<ResponseMessage> discord()
     {
-        CustomAuth2User customAuth2User = (CustomAuth2User) SecurityContextHolder.getContext()
-                                                                                 .getAuthentication()
-                                                                                 .getPrincipal();
+        return ResponseEntity.ok(ResponseMessage.builder().message("Discord").build());
+    }
 
-        return ResponseEntity.ok(customAuth2User);
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ResponseMessage> admin()
+    {
+        return ResponseEntity.ok(ResponseMessage.builder().message("Admin").build());
     }
 
     @PutMapping("/users/{username}")
