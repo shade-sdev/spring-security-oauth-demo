@@ -33,7 +33,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
         boolean isDiscord = authentication.get()
                 .getAuthorities()
                 .stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_DISCORD"));
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("DISCORD"));
 
         if (!isDiscord){
             return new AuthorizationDecision(true);
