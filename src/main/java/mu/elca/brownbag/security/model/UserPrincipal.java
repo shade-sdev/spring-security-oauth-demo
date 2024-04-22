@@ -3,8 +3,8 @@ package mu.elca.brownbag.security.model;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,6 +25,9 @@ public class UserPrincipal implements CustomPrincipal {
     @Default
     AuthProviderType authProviderType = AuthProviderType.NON_OAUTH2_USER;
 
+    @Default
+    Collection<? extends GrantedAuthority> authorities = Set.of();
+
     @Override
     public String getDisplayName()
     {
@@ -35,12 +38,6 @@ public class UserPrincipal implements CustomPrincipal {
     public String getAvatar()
     {
         return String.format("https://ui-avatars.com/api/?name=%s", this.getUsername());
-    }
-
-    @Override
-    public Set<GrantedAuthority> getAuthorities()
-    {
-        return Set.of(new SimpleGrantedAuthority("NON_OAUTH_USER"));
     }
 
     @Override

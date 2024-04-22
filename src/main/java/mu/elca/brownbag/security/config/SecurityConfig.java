@@ -56,8 +56,6 @@ public class SecurityConfig {
                                                       .requestMatchers(MYPROFILE).access(new CustomAuthorizationManager())
                                                       .anyRequest()
                                                       .authenticated())
-//                .rememberMe(rememberMe->rememberMe.key("secretKey")
-//                        .tokenValiditySeconds(2592000))
                    .formLogin(formLogin -> formLogin.loginPage("/form-login")
                                                     .defaultSuccessUrl(MYPROFILE))
                    .oauth2Login(oauth -> oauth
