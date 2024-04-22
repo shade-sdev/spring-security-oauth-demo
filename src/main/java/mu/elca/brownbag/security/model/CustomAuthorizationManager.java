@@ -15,7 +15,7 @@ public class CustomAuthorizationManager implements AuthorizationManager<RequestA
 
     private final Map<String, Integer> requestCounts = new HashMap<>();
 
-    private static final int MAX_REQUESTS = 2;
+    private static final int MAX_REQUESTS = 10;
 
     private static final long RESET_INTERVAL = 30 * 1000L;
 
