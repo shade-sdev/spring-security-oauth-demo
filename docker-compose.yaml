@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  spring-boot-app:
+    image: spring-security-demo:latest
+    ports:
+      - "8080:8080"
+
+  angular-app:
+    image: angular-oauth-demo:latest
+    ports:
+      - "4200:4200"
