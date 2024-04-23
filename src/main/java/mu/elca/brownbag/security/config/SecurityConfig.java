@@ -36,9 +36,9 @@ import java.util.List;
 @EnableMethodSecurity(jsr250Enabled = true, securedEnabled = true)
 public class SecurityConfig {
 
-    private final UserDetailsService userDetailsService;
+    private static final String MY_PROFILE = "/api/me";
 
-    private static final String MYPROFILE = "/api/me";
+    private final UserDetailsService userDetailsService;
 
     @Autowired
     public SecurityConfig(UserDetailsService userDetailsService)
@@ -54,11 +54,11 @@ public class SecurityConfig {
                                      .csrfTokenRequestHandler(csrfTokenRequestAttributeHandler()))
                    .cors(httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(corsConfigurationSource()))
                    .authorizeHttpRequests(auth -> auth.requestMatchers("/csrf", "/login", "form-login", "/logout").permitAll()
-                                                      .requestMatchers(MYPROFILE).access(new CustomAuthorizationManager())
+                                                      .requestMatchers(MY_PROFILE).access(new CustomAuthorizationManager())
                                                       .anyRequest()
                                                       .authenticated())
                    .formLogin(formLogin -> formLogin.loginPage("/form-login")
-                                                    .defaultSuccessUrl(MYPROFILE))
+                                                    .defaultSuccessUrl(MY_PROFILE))
                    .oauth2Login(oauth -> oauth
                            .userInfoEndpoint(userInfo -> userInfo.userService(new CustomOAuth2UserService()))
                            .successHandler(new CustomSuccessHandlerService()))
