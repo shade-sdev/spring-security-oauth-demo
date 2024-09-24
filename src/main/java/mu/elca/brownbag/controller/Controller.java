@@ -11,8 +11,10 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import shade.dev.local.security.annotation.RateLimit;
 
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/api")
@@ -21,18 +23,17 @@ public class Controller {
     private final ApiMapper mapper;
 
     @Autowired
-    public Controller(ApiMapper mapper)
-    {
+    public Controller(ApiMapper mapper) {
         this.mapper = mapper;
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasAnyAuthority('OAUTH2_USER', 'NON_OAUTH_USER')")
-    public ResponseEntity<UserInfo> me()
-    {
+    @PreAuthorize("hasPermission(null, 'mu.elca.brownbag.controller.model.UserUpdateDto', null)")
+    @RateLimit(maxRequests = 1, time = 1, timeUnit = TimeUnit.MINUTES, roles = {"NON_OAUTH_USER"})
+    public ResponseEntity<UserInfo> me() {
         Object userPrincipal = SecurityContextHolder.getContext()
-                                                    .getAuthentication()
-                                                    .getPrincipal();
+                .getAuthentication()
+                .getPrincipal();
 
         if (userPrincipal instanceof CustomPrincipal userInfo) {
             return ResponseEntity.ok(mapper.mapToUserInfo(userInfo));
@@ -43,30 +44,26 @@ public class Controller {
 
     @GetMapping("/user")
     @PreAuthorize("hasRole('ROLE_USER')")
-    public ResponseEntity<ResponseMessage> user()
-    {
+    public ResponseEntity<ResponseMessage> user() {
         return ResponseEntity.ok(ResponseMessage.builder().message("User").build());
     }
 
     @GetMapping("/discord")
     @Secured("ROLE_DISCORD")
-    public ResponseEntity<ResponseMessage> discord()
-    {
+    public ResponseEntity<ResponseMessage> discord() {
         return ResponseEntity.ok(ResponseMessage.builder().message("Discord").build());
     }
 
     @GetMapping("/admin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ResponseEntity<ResponseMessage> admin()
-    {
+    public ResponseEntity<ResponseMessage> admin() {
         return ResponseEntity.ok(ResponseMessage.builder().message("Admin").build());
     }
 
     @PutMapping("/users/{username}")
     @PreAuthorize("hasAnyAuthority('NON_OAUTH_USER', 'OAUTH2_USER') && #username == authentication.principal.username")
     public ResponseEntity<UserUpdateDto> updateUserDetails(@PathVariable("username") String username,
-                                                           @RequestBody UserUpdateDto userUpdateDto)
-    {
+                                                           @RequestBody UserUpdateDto userUpdateDto) {
         return ResponseEntity.ok(userUpdateDto);
     }
 

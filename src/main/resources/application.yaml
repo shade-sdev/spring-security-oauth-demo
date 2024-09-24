@@ -64,3 +64,4 @@ spring:
 logging:
   level:
     org.springframework.security: debug
+    org.springframework.boot.autoconfigure: debug
