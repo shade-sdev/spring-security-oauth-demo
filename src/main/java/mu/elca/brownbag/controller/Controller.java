@@ -3,8 +3,10 @@ package mu.elca.brownbag.controller;
 import mu.elca.brownbag.controller.model.ResponseMessage;
 import mu.elca.brownbag.controller.model.UserInfo;
 import mu.elca.brownbag.controller.model.UserUpdateDto;
+import mu.elca.brownbag.exception.NotFoundException;
 import mu.elca.brownbag.mapper.ApiMapper;
 import mu.elca.brownbag.security.model.CustomPrincipal;
+import mu.elca.brownbag.security.model.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -13,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import shade.dev.local.security.annotation.RateLimit;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -28,7 +29,6 @@ public class Controller {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasPermission(null, 'mu.elca.brownbag.controller.model.UserUpdateDto', null)")
     @RateLimit(maxRequests = 1, time = 1, timeUnit = TimeUnit.MINUTES, roles = {"NON_OAUTH_USER"})
     public ResponseEntity<UserInfo> me() {
         Object userPrincipal = SecurityContextHolder.getContext()
@@ -39,7 +39,7 @@ public class Controller {
             return ResponseEntity.ok(mapper.mapToUserInfo(userInfo));
         }
 
-        return ResponseEntity.of(Optional.empty());
+        throw new NotFoundException(UserPrincipal.class);
     }
 
     @GetMapping("/user")

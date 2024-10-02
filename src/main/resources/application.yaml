@@ -20,6 +20,10 @@ spring:
     console:
       enabled: true
 
+  mvc:
+    problemdetails:
+      enabled: true
+
   security:
     oauth2:
       client:

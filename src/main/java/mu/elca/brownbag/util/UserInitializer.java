@@ -37,8 +37,7 @@ public class UserInitializer implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception
-    {
+    public void run(String... args) {
 
         PermissionJpaEntity nonOauth2UserPermission = PermissionJpaEntity.builder()
                                                                          .name("NON_OAUTH_USER")

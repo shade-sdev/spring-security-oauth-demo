@@ -106,7 +106,7 @@
         <dependency>
             <groupId>com.github.shade-sdev</groupId>
             <artifactId>shade-spring-boot-starter</artifactId>
-            <version>master-SNAPSHOT</version>
+            <version>0ca898ab37</version>
         </dependency>
 
     </dependencies>
