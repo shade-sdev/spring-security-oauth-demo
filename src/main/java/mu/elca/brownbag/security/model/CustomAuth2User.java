@@ -75,30 +75,6 @@ public class CustomAuth2User extends DefaultOAuth2User implements CustomPrincipa
         return null;
     }
 
-    @Override
-    public boolean isAccountNonExpired()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired()
-    {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled()
-    {
-        return true;
-    }
-
     private static String getAvatarUrl(Map<String, Object> attributes, AuthProviderType auth2ProviderType)
     {
         return switch (auth2ProviderType) {
