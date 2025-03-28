@@ -1,10 +1,4 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.8.4-openjdk-17-slim'
-            args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
-        }
-    }
 
     tools {
         jdk 'openjdk-17'
@@ -32,9 +26,7 @@ pipeline {
             steps {
                 script {
                     // Install Docker CLI
-                    sh '''
-                        apt-get update && apt-get install -y docker.io
-                    '''
+
 
                     // Read project details from pom.xml
                     def pom = readMavenPom file: 'pom.xml'
