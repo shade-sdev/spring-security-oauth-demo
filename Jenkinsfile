@@ -6,6 +6,11 @@ pipeline {
         }
     }
 
+    tools {
+        jdk 'openjdk-17'
+        maven 'maven3'
+    }
+
     environment {
         DOCKER_REGISTRY = 'localhost:5002'
     }
