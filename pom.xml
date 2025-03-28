@@ -140,12 +140,18 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.4.5</version>
                 <configuration>
-                    <to>
-                        <image>${project.artifactId}:${project.version}</image>
-                    </to>
                     <from>
                         <image>openjdk:17-jdk-slim</image>
                     </from>
+                    <to>
+                        <image>${project.artifactId}:${project.version}</image>
+                    </to>
+                    <container>
+                        <mainClass>mu.elca.brownbag.DemoApplication</mainClass>
+                        <ports>
+                            <port>8921</port>
+                        </ports>
+                    </container>
                 </configuration>
             </plugin>
         </plugins>
