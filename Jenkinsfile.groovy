@@ -17,35 +17,33 @@ pipeline {
             }
         }
 
+        stage('Extract Project Info') {
+            steps {
+                script {
+                    env.IMAGE_NAME = sh(script: "mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout", returnStdout: true).trim()
+                    env.IMAGE_VERSION = sh(script: "mvn help:evaluate -Dexpression=project.version -q -DforceStdout", returnStdout: true).trim()
+                }
+            }
+        }
+
         stage('Build') {
             steps {
                 sh 'mvn clean package -DskipTests'
             }
         }
 
-        stage('Build and Push Docker Image') {
+        stage('Build Docker Image using Jib') {
+            steps {
+                sh "mvn compile jib:dockerBuild"
+            }
+        }
+
+        stage('Push Docker Image') {
             steps {
                 script {
-                    // Install Docker CLI
-
-
-                    // Read project details from pom.xml
-                    def pom = readMavenPom file: 'pom.xml'
-                    def imageName = pom.artifactId
-                    def imageVersion = pom.version
-
-                    // Build image using Jib (local build only)
-                    sh "mvn compile jib:buildTar"
-
-                    // Push to local registry using docker.withRegistry
-                    docker.withRegistry('http://localhost:5002') {
-                        // Tag the image
-                        def image = docker.build("${imageName}:${imageVersion}")
-
-                        // Push to registry
-                        image.push()
-                        image.push("${imageVersion}")
-                    }
+                    def fullImageName = "${DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_VERSION}"
+                    sh "docker tag ${env.IMAGE_NAME}:${env.IMAGE_VERSION} ${fullImageName}"
+                    sh "docker push ${fullImageName}"
                 }
             }
         }
@@ -57,11 +55,11 @@ pipeline {
         }
 
         success {
-            echo 'Pipeline completed successfully!'
+            echo '✅ Pipeline completed successfully!'
         }
 
         failure {
-            echo 'Pipeline failed. Please check the logs!'
+            echo '❌ Pipeline failed. Please check the logs!'
         }
     }
 }
