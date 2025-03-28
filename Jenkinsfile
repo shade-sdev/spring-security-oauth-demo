@@ -1,14 +1,13 @@
 pipeline {
-    agent any
-
-    tools {
-        jdk 'openjdk-17'
-        maven 'maven3'
+    agent {
+        docker {
+            image 'maven:3.8.4-openjdk-17-slim'
+            args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
+        }
     }
 
     environment {
         DOCKER_REGISTRY = 'localhost:5002'
-        PROJECT_NAME = sh(returnStdout: true, script: 'basename $(pwd)').trim()
     }
 
     stages {
@@ -24,27 +23,27 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image with Jib') {
-            steps {
-                sh 'mvn compile jib:build -Dimage=${PROJECT_NAME}'
-            }
-        }
-
-        stage('Push to Registry') {
+        stage('Build Docker Image') {
             steps {
                 script {
-                    // Get the image name and version from the pom.xml
+                    // Install Docker CLI
+                    sh '''
+                        apt-get update && apt-get install -y docker.io
+                    '''
+
+                    // Read project details from pom.xml
                     def pom = readMavenPom file: 'pom.xml'
                     def imageName = pom.artifactId
                     def imageVersion = pom.version
 
-                    // Docker login (if needed)
-                    // withDockerRegistry([credentialsId: 'docker-registry-credentials', url: "${DOCKER_REGISTRY}"]) {
-                        sh """
-                            docker tag ${imageName}:${imageVersion} ${DOCKER_REGISTRY}/${imageName}:${imageVersion}
-                            docker push ${DOCKER_REGISTRY}/${imageName}:${imageVersion}
-                        """
-                    // }
+                    // Build image using Jib (local build only)
+                    sh "mvn compile jib:buildTar"
+
+                    // Tag and push to local registry
+                    sh """
+                        docker tag ${imageName}:${imageVersion} ${DOCKER_REGISTRY}/${imageName}:${imageVersion}
+                        docker push ${DOCKER_REGISTRY}/${imageName}:${imageVersion}
+                    """
                 }
             }
         }
@@ -52,8 +51,6 @@ pipeline {
 
     post {
         always {
-            // Clean up local images
-            sh 'docker image prune -f'
             cleanWs()
         }
 
@@ -62,7 +59,7 @@ pipeline {
         }
 
         failure {
-            echo 'Pipeline failed. Please check the logs.'
+            echo 'Pipeline failed. Please check the logs!'
         }
     }
 }
