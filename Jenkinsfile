@@ -28,7 +28,7 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+       stage('Build and Push Docker Image') {
             steps {
                 script {
                     // Install Docker CLI
@@ -44,11 +44,15 @@ pipeline {
                     // Build image using Jib (local build only)
                     sh "mvn compile jib:buildTar"
 
-                    // Tag and push to local registry
-                    sh """
-                        docker tag ${imageName}:${imageVersion} ${DOCKER_REGISTRY}/${imageName}:${imageVersion}
-                        docker push ${DOCKER_REGISTRY}/${imageName}:${imageVersion}
-                    """
+                    // Push to local registry using docker.withRegistry
+                    docker.withRegistry('http://localhost:5002') {
+                        // Tag the image
+                        def image = docker.build("${imageName}:${imageVersion}")
+
+                        // Push to registry
+                        image.push()
+                        image.push("${imageVersion}")
+                    }
                 }
             }
         }
