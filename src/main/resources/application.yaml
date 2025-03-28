@@ -1,3 +1,6 @@
+server:
+  port: 8921
+
 spring:
 
   profiles:
