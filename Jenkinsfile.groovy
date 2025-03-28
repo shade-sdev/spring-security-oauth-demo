@@ -27,9 +27,7 @@ pipeline {
             steps {
                 script {
                     // Install Docker CLI
-                    sh '''
-                        apt-get update && apt-get install -y docker.io
-                    '''
+
 
                     // Read project details from pom.xml
                     def pom = readMavenPom file: 'pom.xml'
