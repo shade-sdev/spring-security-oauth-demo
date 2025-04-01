@@ -56,6 +56,7 @@ pipeline {
                         sh '''
                         docker run --rm --name my-maven-project \
                         -v "$(pwd)":/usr/src/mymaven \
+                        -v /var/run/docker.sock:/var/run/docker.sock \
                         -w /usr/src/mymaven \
                         maven:3.9.9-eclipse-temurin-17 sh -c "mvn compile jib:dockerBuild"
                     '''
