@@ -18,7 +18,7 @@ pipeline {
                         cpu: "500m"
                         memory: "1Gi"
                   - name: dind
-                    image: docker:24.0-dind-alpine3.18
+                    image: docker:24.0.2-dind-alpine3.18
                     securityContext:
                       privileged: true
                     env:
@@ -29,7 +29,7 @@ pipeline {
                         cpu: "1000m"
                         memory: "2Gi"
                   - name: maven
-                    image: maven:3.8.6-openjdk-17
+                    image: maven:3.8.3-openjdk-17
                     command: ['cat']
                     tty: true
                     env:
