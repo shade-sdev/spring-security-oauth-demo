@@ -8,7 +8,7 @@ pipeline {
                 spec:
                   containers:
                   - name: jnlp
-                    image: jenkins/inbound-agent:alpine-jdk11
+                    image: jenkins/inbound-agent:latest-alpine-jdk11
                     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
                   volumes:
                   - name: docker-sock
