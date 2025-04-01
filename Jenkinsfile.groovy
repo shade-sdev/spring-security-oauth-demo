@@ -18,9 +18,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
-                container('dind') {
-                    sh 'docker ps'
-                }
             }
         }
 
@@ -41,7 +38,9 @@ pipeline {
 
         stage('Build Docker Image using Jib') {
             steps {
-                sh "mvn compile jib:dockerBuild"
+                container('dind') {
+                    sh "mvn compile jib:dockerBuild"
+                }
             }
         }
 
