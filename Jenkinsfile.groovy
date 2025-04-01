@@ -9,7 +9,7 @@ pipeline {
                 spec:
                   containers:
                   - name: jnlp
-                    image: jenkins/inbound-agent:alpine
+                    image: docker:28.0.4-dind
                     args: [\'$(JENKINS_SECRET)\', \'$(JENKINS_NAME)\']
                     resources:
                       limits:
