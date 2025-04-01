@@ -50,19 +50,12 @@ pipeline {
         stage('Build Docker Image using Jib') {
             steps {
                 container('dind') {
-                    sh "mvn compile jib:dockerBuild"
-                }
-            }
-        }
+                    script {
+                        env.JAVA_HOME_PATH = tool 'openjdk-17'
+                        env.MAVEN_HOME_PATH = tool 'maven3'
 
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    env.JAVA_HOME_PATH = tool 'openjdk-17'
-                    env.MAVEN_HOME_PATH = tool 'maven3'
-
-                    // Build with Jib using the tools from Jenkins
-                    sh """
+                        // Build with Jib using the tools from Jenkins
+                        sh """
                             export JAVA_HOME=${env.JAVA_HOME_PATH}
                             export PATH=\${JAVA_HOME}/bin:${env.MAVEN_HOME_PATH}/bin:\$PATH
                             
@@ -73,6 +66,19 @@ pipeline {
                             # Run Jib
                             mvn compile jib:dockerBuild
                         """
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    container('dind') {
+                        def fullImageName = "${DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_VERSION}"
+                        sh "docker tag ${env.IMAGE_NAME}:${env.IMAGE_VERSION} ${fullImageName}"
+                        sh "docker push ${fullImageName}"
+                    }
                 }
             }
         }
