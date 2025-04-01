@@ -1,8 +1,29 @@
 pipeline {
     agent {
         kubernetes {
-            label 'jnlp'
-            defaultContainer 'jnlp'
+            // Use modern pod template inheritance
+            inheritFrom 'default'
+            yaml '''
+                apiVersion: v1
+                kind: Pod
+                spec:
+                  containers:
+                  - name: jnlp
+                    image: jenkins/inbound-agent:alpine
+                    args: [\'$(JENKINS_SECRET)\', \'$(JENKINS_NAME)\']
+                    resources:
+                      limits:
+                        cpu: "500m"
+                        memory: "1Gi"
+                  - name: maven
+                    image: maven:3.8.6-openjdk-17
+                    command: ['cat']
+                    tty: true
+                    resources:
+                      limits:
+                        cpu: "1000m"
+                        memory: "2Gi"
+            '''
         }
     }
 
