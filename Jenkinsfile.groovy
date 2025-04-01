@@ -19,7 +19,6 @@ pipeline {
         stage('Ping Registry') {
             steps {
                 script {
-                    sh "docker ps"
                     def registryHost = 'registry-server.devops-tools.svc.cluster.local'
                     def registryPort = '5000'
                     sh "ping -c 3 ${registryHost} || echo 'Ping failed, moving to curl test'"
@@ -51,8 +50,16 @@ pipeline {
 
         stage('Build Docker Image using Jib') {
             steps {
-                container('dind') {
-                    sh "mvn compile jib:dockerBuild"
+                script {
+                    container('dind') {
+                        sh 'docker ps'
+                        sh '''
+                        docker run --rm --name my-maven-project \
+                        -v "$(pwd)":/usr/src/mymaven \
+                        -w /usr/src/mymaven \
+                        maven:3.9.9-eclipse-temurin-17 sh -c "mvn compile jib:dockerBuild"
+                    '''
+                    }
                 }
             }
         }
