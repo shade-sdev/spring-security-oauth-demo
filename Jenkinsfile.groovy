@@ -1,7 +1,8 @@
 pipeline {
     agent {
         kubernetes {
-            inheritFrom  'jnlp'
+            label 'jnlp'
+            defaultContainer 'jnlp'
         }
     }
 
