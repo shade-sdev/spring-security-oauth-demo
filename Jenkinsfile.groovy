@@ -11,7 +11,7 @@ pipeline {
     }
 
     environment {
-        DOCKER_REGISTRY = 'localhost:5002'
+        DOCKER_REGISTRY = 'registry-server.devops-tools.svc.cluster.local:5000'
     }
 
     stages {
@@ -47,9 +47,11 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    def fullImageName = "${DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_VERSION}"
-                    sh "docker tag ${env.IMAGE_NAME}:${env.IMAGE_VERSION} ${fullImageName}"
-                    sh "docker push ${fullImageName}"
+                    container('dind') {
+                        def fullImageName = "${DOCKER_REGISTRY}/${env.IMAGE_NAME}:${env.IMAGE_VERSION}"
+                        sh "docker tag ${env.IMAGE_NAME}:${env.IMAGE_VERSION} ${fullImageName}"
+                        sh "docker push ${fullImageName}"
+                    }
                 }
             }
         }
