@@ -1,47 +1,26 @@
 pipeline {
     agent {
         kubernetes {
-            label 'dind-agent'
+            label 'safe-agent'
             yaml '''
                 apiVersion: v1
                 kind: Pod
-                metadata:
-                  labels:
-                    jenkins: agent
                 spec:
                   containers:
                   - name: jnlp
-                    image: jenkins/inbound-agent:4.11-1-alpine
+                    image: jenkins/inbound-agent:alpine-jdk11
                     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-                    resources:
-                      limits:
-                        cpu: "500m"
-                        memory: "1Gi"
-                  - name: dind
-                    image: docker:24.0.2-dind-alpine3.18
-                    securityContext:
-                      privileged: true
-                    env:
-                    - name: DOCKER_TLS_CERTDIR
-                      value: ""
-                    resources:
-                      limits:
-                        cpu: "1000m"
-                        memory: "2Gi"
-                  - name: maven
-                    image: maven:3.8.3-openjdk-17
+                  - name: builder
+                    image: maven:3.8.6-jdk-11
                     command: ['cat']
                     tty: true
-                    env:
-                    - name: DOCKER_HOST
-                      value: "tcp://dind:2375"
-                    resources:
-                      limits:
-                        cpu: "1000m"
-                        memory: "2Gi"
+                    volumeMounts:
+                    - name: docker-sock
+                      mountPath: /var/run/docker.sock
                   volumes:
                   - name: docker-sock
-                    emptyDir: {}
+                    hostPath:
+                      path: /var/run/docker.sock
             '''
         }
     }
