@@ -4,17 +4,34 @@ pipeline {
             // Use modern pod template inheritance
             inheritFrom 'default'
             yaml '''
-                apiVersion: v1
+       apiVersion: v1
                 kind: Pod
+                metadata:
+                  labels:
+                    jenkins: agent
                 spec:
                   containers:
                   - name: jnlp
-                    image: docker:28.0.4-dind
-                    args: [\'$(JENKINS_SECRET)\', \'$(JENKINS_NAME)\']
+                    image: jenkins/inbound-agent:4.11-1-alpine
+                    args: ['\\$(JENKINS_SECRET)', '\\$(JENKINS_NAME)']
                     resources:
                       limits:
                         cpu: "500m"
                         memory: "1Gi"
+                  - name: dind
+                    image: docker:24.0-dind-alpine3.18
+                    securityContext:
+                      privileged: true
+                    env:
+                    - name: DOCKER_TLS_CERTDIR
+                      value: ""
+                    resources:
+                      limits:
+                        cpu: "1000m"
+                        memory: "2Gi"
+                  volumes:
+                  - name: docker-sock
+                    emptyDir: {}
             '''
         }
     }
