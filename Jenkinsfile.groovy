@@ -10,13 +10,6 @@ pipeline {
                   - name: jnlp
                     image: jenkins/inbound-agent:alpine-jdk11
                     args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-                  - name: builder
-                    image: maven:3.8.6-jdk-11
-                    command: ['cat']
-                    tty: true
-                    volumeMounts:
-                    - name: docker-sock
-                      mountPath: /var/run/docker.sock
                   volumes:
                   - name: docker-sock
                     hostPath:
