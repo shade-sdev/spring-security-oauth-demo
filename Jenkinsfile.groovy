@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        kubernetes {
+            label 'jnlp'
+            defaultContainer 'jnlp'
+        }
+    }
 
     tools {
         jdk 'openjdk-17'
