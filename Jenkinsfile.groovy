@@ -15,6 +15,15 @@ pipeline {
     }
 
     stages {
+        stage('Ping Registry') {
+            steps {
+                def registryHost = 'registry-server.devops-tools.svc.cluster.local'
+                def registryPort = '5000'
+                sh "ping -c 3 ${registryHost} || echo 'Ping failed, moving to curl test'"
+                sh "curl -v http://${registryHost}:${registryPort}/v2/_catalog || echo 'Registry is not reachable'"
+            }
+        }
+
         stage('Checkout') {
             steps {
                 checkout scm
