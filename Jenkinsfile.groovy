@@ -1,10 +1,9 @@
 pipeline {
     agent {
         kubernetes {
-            // Use modern pod template inheritance
-            inheritFrom 'default'
+            label 'dind-agent'
             yaml '''
-       apiVersion: v1
+                apiVersion: v1
                 kind: Pod
                 metadata:
                   labels:
@@ -13,7 +12,7 @@ pipeline {
                   containers:
                   - name: jnlp
                     image: jenkins/inbound-agent:4.11-1-alpine
-                    args: ['\\$(JENKINS_SECRET)', '\\$(JENKINS_NAME)']
+                    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
                     resources:
                       limits:
                         cpu: "500m"
@@ -25,6 +24,17 @@ pipeline {
                     env:
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
+                    resources:
+                      limits:
+                        cpu: "1000m"
+                        memory: "2Gi"
+                  - name: maven
+                    image: maven:3.8.6-openjdk-17
+                    command: ['cat']
+                    tty: true
+                    env:
+                    - name: DOCKER_HOST
+                      value: "tcp://dind:2375"
                     resources:
                       limits:
                         cpu: "1000m"
