@@ -8,6 +8,7 @@ pipeline {
     tools {
         jdk 'openjdk-17'
         maven 'maven3'
+        docker 'docker'
     }
 
     environment {
@@ -18,6 +19,7 @@ pipeline {
         stage('Ping Registry') {
             steps {
                 script {
+                    sh "docker ps"
                     def registryHost = 'registry-server.devops-tools.svc.cluster.local'
                     def registryPort = '5000'
                     sh "ping -c 3 ${registryHost} || echo 'Ping failed, moving to curl test'"
@@ -43,47 +45,14 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'mvn clean package -DskipTests'
-            }
-        }
-
-        stage('Prepare Maven and pom.xml for Docker') {
-            steps {
-                // Copy the pom.xml and target directory to a location that can be mounted in the dind container
-                sh """
-                    mkdir -p /tmp/maven-project
-                    cp pom.xml /tmp/maven-project/
-                    mkdir -p /tmp/maven-project/target
-                    cp -r target/* /tmp/maven-project/target/ || echo "No compiled files found"
-                """
+                sh ''
             }
         }
 
         stage('Build Docker Image using Jib') {
             steps {
                 container('dind') {
-                    sh """
-                        # Install OpenJDK 17
-                        apt-get update || apk update
-                        apt-get install -y openjdk-17-jdk || apk add openjdk17
-                        
-                        # Set JAVA_HOME
-                        export JAVA_HOME=\$(readlink -f \$(which java) | sed "s:/bin/java::")
-                        echo "JAVA_HOME set to \$JAVA_HOME"
-                        
-                        # Install Maven
-                        apt-get install -y maven || apk add maven
-                        
-                        # Verify tools
-                        java -version
-                        mvn -version
-                        
-                        # Navigate to the project directory
-                        cd /tmp/maven-project
-                        
-                        # Run Jib
-                        mvn compile jib:dockerBuild
-                    """
+                    sh "mvn compile jib:dockerBuild"
                 }
             }
         }
