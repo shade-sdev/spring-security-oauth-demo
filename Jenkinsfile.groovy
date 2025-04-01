@@ -8,7 +8,7 @@ pipeline {
     tools {
         jdk 'openjdk-17'
         maven 'maven3'
-        docker 'docker'
+        dockerTool 'docker'
     }
 
     environment {
