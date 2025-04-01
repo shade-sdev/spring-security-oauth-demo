@@ -49,7 +49,7 @@ pipeline {
 
         stage('Build Docker Image using Jib') {
             steps {
-                container('dind') {
+                container('maven') {
                     sh "mvn compile jib:dockerBuild"
                 }
             }
