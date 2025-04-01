@@ -1,24 +1,7 @@
 pipeline {
     agent {
         kubernetes {
-            label 'safe-agent'
-            yaml '''
-                apiVersion: v1
-                kind: Pod
-                spec:
-                  containers:
-                  - name: jnlp
-                    image: jenkins/inbound-agent:latest-jdk17
-                    args: ['\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-                  - name: dind
-                    image: docker:latest
-                    securityContext:
-                      privileged: true
-                  volumes:
-                  - name: docker-sock
-                    hostPath:
-                      path: /var/run/docker.sock
-            '''
+            inheritFrom 'jenkins-agent'
         }
     }
 
@@ -35,6 +18,9 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+                container('dind') {
+                    sh 'docker ps'
+                }
             }
         }
 
