@@ -19,7 +19,7 @@ pipeline {
         stage('Ping Registry') {
             steps {
                 script {
-                    "sh docker ps"
+                    sh "docker ps"
                     def registryHost = 'registry-server.devops-tools.svc.cluster.local'
                     def registryPort = '5000'
                     sh "ping -c 3 ${registryHost} || echo 'Ping failed, moving to curl test'"
