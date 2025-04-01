@@ -15,14 +15,6 @@ pipeline {
                       limits:
                         cpu: "500m"
                         memory: "1Gi"
-                  - name: maven
-                    image: maven:3.8.6-openjdk-17
-                    command: ['cat']
-                    tty: true
-                    resources:
-                      limits:
-                        cpu: "1000m"
-                        memory: "2Gi"
             '''
         }
     }
