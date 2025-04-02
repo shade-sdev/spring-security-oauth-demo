@@ -41,26 +41,18 @@ pipeline {
         stage('Deploy Pod using Kubernetes Plugin') {
             steps {
                 script {
-                    podTemplate(
-                            label: 'jenkins-agent',
-                            namespace: 'devops-tools', // Ensure the pod runs in the correct namespace
-                            containers: [
-                                    containerTemplate(
-                                            name: 'app',
-                                            image: env.IMAGE_NAME,
-                                            ttyEnabled: true,
-                                            command: 'java',
-                                            args: '-cp @/app/jib-classpath-file mu.elca.brownbag.DemoApplication',
-                                            ports: [portMapping(name: 'http', containerPort: 8921)]
-                                    )
-                            ]
-                    ) {
-                        node('jenkins-agent') {
-                            container('app') {
-                                echo '✅ Pod is running in devops-tools namespace'
-                            }
-                        }
-                    }
+                    // Ensure kubectl is configured and the cluster context is set
+                    def deploymentName = "spring-security-oauth-demo"
+                    def namespace = "devops-tools"
+                    def image = env.IMAGE_NAME
+
+                    // Set the image in the deployment
+                    echo "Updating deployment ${deploymentName} with new image ${image}"
+
+                    sh """
+            kubectl set image deployment/${deploymentName} app=${image} -n ${namespace}
+            kubectl rollout restart deployment/${deploymentName} -n ${namespace}
+            """
                 }
             }
         }
