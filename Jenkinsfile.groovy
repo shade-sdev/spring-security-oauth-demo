@@ -42,10 +42,9 @@ pipeline {
             steps {
                 script {
                    container('kubectl') {
-                       sh """
-                        kubectl set image deployment/spring-security-oauth-demo app=${env.IMAGE_NAME} --namespace=devops-tools
-                        kubectl rollout status deployment/spring-security-oauth-demo --namespace=devops-tools
-                    """
+                       withKubeConfig([credentialsId: 'k8s-credentials', serverUrl: 'https://kubernetes.default.svc.cluster.local:443']) {
+                           sh 'kubectl set image deployment/spring-security-oauth-demo app=${IMAGE_NAME} -n devops-tools'
+                       }
                    }
                 }
             }
