@@ -41,22 +41,21 @@ pipeline {
         stage('Deploy Pod using Kubernetes Plugin') {
             steps {
                 script {
-                    // Ensure kubectl is configured and the cluster context is set
-                    def deploymentName = "spring-security-oauth-demo"
-                    def namespace = "devops-tools"
-                    def image = env.IMAGE_NAME
+                   container('kubectl') {
+                       def artifactId = sh(script: 'mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout', returnStdout: true).trim()
+                       def version = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
+                       def image = "${env.REGISTRY}/${artifactId}:${version}"
 
-                    // Set the image in the deployment
-                    echo "Updating deployment ${deploymentName} with new image ${image}"
+                       env.IMAGE_NAME = image
 
-                    sh """
-            kubectl set image deployment/${deploymentName} app=${image} -n ${namespace}
-            kubectl rollout restart deployment/${deploymentName} -n ${namespace}
-            """
+                       sh """
+                        kubectl set image deployment/spring-security-oauth-demo app=${env.IMAGE_NAME} --namespace=devops-tools
+                        kubectl rollout status deployment/spring-security-oauth-demo --namespace=devops-tools
+                    """
+                   }
                 }
             }
         }
-
 
     }
 
