@@ -41,11 +41,14 @@ pipeline {
         stage('Deploy Pod using Kubernetes Plugin') {
             steps {
                 script {
-                   container('kubectl') {
-                       withKubeConfig([credentialsId: 'k8s-credentials', serverUrl: 'https://kubernetes.default.svc.cluster.local:443']) {
-                           sh 'kubectl set image deployment/spring-security-oauth-demo app=${IMAGE_NAME} -n devops-tools'
-                       }
-                   }
+                    container('kubectl') {
+                        withKubeConfig([credentialsId: 'k8s-credentials', serverUrl: 'https://kubernetes.default.svc.cluster.local:443']) {
+                            // Debugging output to check if kubectl is available
+                            sh 'which kubectl'
+                            sh 'kubectl version'
+                            sh 'kubectl set image deployment/spring-security-oauth-demo app=${IMAGE_NAME} -n devops-tools'
+                        }
+                    }
                 }
             }
         }
