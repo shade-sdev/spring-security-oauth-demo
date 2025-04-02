@@ -41,7 +41,9 @@ pipeline {
         stage('Deploy Pod using Kubernetes Plugin') {
             steps {
                 script {
-                    podTemplate(label: 'jenkins-agent',
+                    podTemplate(
+                            label: 'jenkins-agent',
+                            namespace: 'devops-tools', // Ensure the pod runs in the correct namespace
                             containers: [
                                     containerTemplate(
                                             name: 'app',
@@ -55,13 +57,14 @@ pipeline {
                     ) {
                         node('jenkins-agent') {
                             container('app') {
-                                echo '✅ Pod is running'
+                                echo '✅ Pod is running in devops-tools namespace'
                             }
                         }
                     }
                 }
             }
         }
+
 
     }
 
