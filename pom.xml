@@ -144,7 +144,9 @@
                         <image>openjdk:17-jdk-slim</image>
                     </from>
                     <to>
-                        <image>${project.artifactId}:${project.version}</image>
+                        <image>
+                            registry-server.devops-tools.svc.cluster.local:5000/${project.artifactId}:${project.version}
+                        </image>
                     </to>
                     <container>
                         <mainClass>mu.elca.brownbag.DemoApplication</mainClass>
