@@ -42,12 +42,6 @@ pipeline {
             steps {
                 script {
                    container('kubectl') {
-                       def artifactId = sh(script: 'mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout', returnStdout: true).trim()
-                       def version = sh(script: 'mvn help:evaluate -Dexpression=project.version -q -DforceStdout', returnStdout: true).trim()
-                       def image = "${env.REGISTRY}/${artifactId}:${version}"
-
-                       env.IMAGE_NAME = image
-
                        sh """
                         kubectl set image deployment/spring-security-oauth-demo app=${env.IMAGE_NAME} --namespace=devops-tools
                         kubectl rollout status deployment/spring-security-oauth-demo --namespace=devops-tools
