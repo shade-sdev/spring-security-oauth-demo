@@ -147,8 +147,6 @@
                         <image>
                             registry-server.devops-tools.svc.cluster.local:5000/${project.artifactId}:${project.version}
                         </image>
-                        <credHelper>false</credHelper>
-                        <allowInsecureRegistries>true</allowInsecureRegistries>
                     </to>
                     <container>
                         <mainClass>mu.elca.brownbag.DemoApplication</mainClass>
@@ -156,6 +154,7 @@
                             <port>8921</port>
                         </ports>
                     </container>
+                    <allowInsecureRegistries>true</allowInsecureRegistries>
                 </configuration>
             </plugin>
         </plugins>
