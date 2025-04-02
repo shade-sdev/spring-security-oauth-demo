@@ -147,6 +147,8 @@
                         <image>
                             registry-server.devops-tools.svc.cluster.local:5000/${project.artifactId}:${project.version}
                         </image>
+                        <credHelper>false</credHelper>
+                        <allowInsecureRegistries>true</allowInsecureRegistries>
                     </to>
                     <container>
                         <mainClass>mu.elca.brownbag.DemoApplication</mainClass>
