@@ -41,28 +41,28 @@ pipeline {
         stage('Deploy Pod using Kubernetes Plugin') {
             steps {
                 script {
-                    podTemplate(
+                    podTemplate(label: 'jenkins-agent',
                             containers: [
                                     containerTemplate(
-                                            name: 'app-container',
+                                            name: 'app',
                                             image: env.IMAGE_NAME,
-                                            alwaysPullImage: true,
-                                            command: 'cat', // Keeps the container running
                                             ttyEnabled: true,
-                                            ports: [portMapping(8921, 8921)]
+                                            command: 'java',
+                                            args: '-cp @/app/jib-classpath-file mu.elca.brownbag.DemoApplication',
+                                            ports: [portMapping(name: 'http', containerPort: 8921)]
                                     )
                             ]
                     ) {
-                        node(POD_LABEL) {
-                            container('app-container') {
-                                echo '✅ Application pod started successfully!'
-                                sh 'echo "Application running inside Kubernetes Pod"'
+                        node('jenkins-agent') {
+                            container('app') {
+                                echo '✅ Pod is running'
                             }
                         }
                     }
                 }
             }
         }
+
     }
 
     post {
